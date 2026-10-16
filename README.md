@@ -266,7 +266,7 @@ npm test
    - **Environment**: `Node`
    - **Region**: Same region as your database (e.g. `Oregon`)
    - **Branch**: `main`
-   - **Build Command**: `npm install && npm run build`
+   - **Build Command**: `npm install --include=dev && npm run build`
    - **Start Command**: `npx prisma migrate deploy && node dist/server.js`
 5. Under **Environment Variables**, add:
    - `NODE_ENV`: `production`
