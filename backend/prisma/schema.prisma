@@ -1,0 +1,101 @@
+// FoodieHub Database Schema
+// Optimized for PostgreSQL with Prisma ORM
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CUSTOMER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PREPARING
+  OUT_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  phone        String?
+  role         Role     @default(CUSTOMER)
+  orders       Order[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([email])
+}
+
+model Food {
+  id           String      @id @default(uuid())
+  name         String
+  description  String
+  price        Float
+  imageUrl     String
+  category     String
+  isVegetarian Boolean     @default(false)
+  isAvailable  Boolean     @default(true)
+  orderItems   OrderItem[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@index([category])
+  @@index([isAvailable])
+  @@index([isVegetarian])
+}
+
+model Order {
+  id                   String      @id @default(uuid())
+  orderNumber          String      @unique
+  userId               String
+  user                 User        @relation(fields: [userId], references: [id], onDelete: Restrict)
+  customerName         String
+  customerPhone        String
+  deliveryAddress      String
+  city                 String
+  state                String
+  postalCode           String
+  deliveryInstructions String?
+  subtotal             Float
+  deliveryFee          Float
+  total                Float
+  paymentMethod        String      @default("CASH_ON_DELIVERY")
+  paymentStatus        String      @default("PENDING")
+  status               OrderStatus @default(PENDING)
+  items                OrderItem[]
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([orderNumber])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id        String   @id @default(uuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  foodId    String?
+  food      Food?    @relation(fields: [foodId], references: [id], onDelete: SetNull)
+  foodName  String
+  unitPrice Float
+  quantity  Int
+  lineTotal Float
+  createdAt DateTime @default(now())
+
+  @@index([orderId])
+  @@index([foodId])
+}
