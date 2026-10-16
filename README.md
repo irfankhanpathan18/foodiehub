@@ -181,8 +181,8 @@ npm install
 ```env
 PORT=5000
 NODE_ENV=development
-DATABASE_URL=postgresql://username:password@localhost:5432/foodiehub?schema=public
-JWT_SECRET=super_secret_jwt_key_at_least_32_characters_long_12345
+DATABASE_URL=postgresql://your_user:your_password@localhost:5432/foodiehub?schema=public
+JWT_SECRET=your_jwt_secret_minimum_32_characters_long
 FRONTEND_URL=http://localhost:5173
 ```
 
